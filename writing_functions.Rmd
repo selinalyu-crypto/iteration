@@ -114,6 +114,43 @@ sim_mean_sd(100, 6, 3) #each time you run, you get slightly different number, sh
 sim_mean_sd(n = 100) #used default (first line)
 ```
 
+##Scoping and names
+```{r}
+f = function(x) {
+  z = x + y
+  z
+}
+
+x = 1
+y = 2
+
+f(x = y)
+```
+
+
+## Functions as arguments
+```{r}
+my_summary = function(x, summ_func){
+  
+  summ_func(x)
+  
+}
+
+x_vec = rnorm(100, 3, 7)
+
+mean(x_vec)
+median (x_vec)
+
+my_summary(x_vec, mean)
+my_summary(x_vec, IQR)
+my_summary(x_vec, sd)
+```
+
+
+
+
+
+
 
 
 

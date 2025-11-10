@@ -190,3 +190,59 @@ sim_mean_sd(n = 100) #used default (first line)
     ##   mu_hat sigma_hat
     ##    <dbl>     <dbl>
     ## 1   2.30      2.90
+
+\##Scoping and names
+
+``` r
+f = function(x) {
+  z = x + y
+  z
+}
+
+x = 1
+y = 2
+
+f(x = y)
+```
+
+    ## [1] 4
+
+## Functions as arguments
+
+``` r
+my_summary = function(x, summ_func){
+  
+  summ_func(x)
+  
+}
+
+x_vec = rnorm(100, 3, 7)
+
+mean(x_vec)
+```
+
+    ## [1] 2.59607
+
+``` r
+median (x_vec)
+```
+
+    ## [1] 2.125656
+
+``` r
+my_summary(x_vec, mean)
+```
+
+    ## [1] 2.59607
+
+``` r
+my_summary(x_vec, IQR)
+```
+
+    ## [1] 8.46415
+
+``` r
+my_summary(x_vec, sd)
+```
+
+    ## [1] 6.618559
