@@ -209,6 +209,8 @@ f(x = y)
 
 ## Functions as arguments
 
+Option+shift to select multiple lines
+
 ``` r
 my_summary = function(x, summ_func){
   
@@ -246,3 +248,53 @@ my_summary(x_vec, sd)
 ```
 
     ## [1] 6.618559
+
+## LoTR data
+
+``` r
+fellowship_ring = readxl::read_excel("./data/LotR_Words.xlsx", range = "B3:D6") |>
+  mutate(movie = "fellowship_ring")
+
+two_towers = readxl::read_excel("./data/LotR_Words.xlsx", range = "F3:H6") |>
+  mutate(movie = "two_towers")
+
+return_king = readxl::read_excel("./data/LotR_Words.xlsx", range = "J3:L6") |>
+  mutate(movie = "return_king")
+
+lotr_tidy = bind_rows(fellowship_ring, two_towers, return_king) |>
+  janitor::clean_names() |>
+  pivot_longer(
+    female:male,
+    names_to = "sex",
+    values_to = "words") |> 
+  mutate(race = str_to_lower(race)) |> 
+  select(movie, everything())
+```
+
+Write a function to import and clean this data
+
+``` r
+lotr_load_and_tidy = function(path, range, movie_name) {
+  
+  df = 
+    readxl::read_excel(path, range = range) |>
+    janitor::clean_names() |>
+    pivot_longer(
+      female:male,
+      names_to = "sex",
+      values_to = "words") |>
+    mutate(
+      race = str_to_lower(race),
+      movie = movie_name) |> 
+    select(movie, everything())
+  
+  df
+  
+}
+
+lotr_tidy_function = 
+  bind_rows(
+    lotr_load_and_tidy("data/LotR_Words.xlsx", "B3:D6", "fellowship_ring"),
+    lotr_load_and_tidy("data/LotR_Words.xlsx", "F3:H6", "two_towers"),
+    lotr_load_and_tidy("data/LotR_Words.xlsx", "J3:L6", "return_king"))
+```
