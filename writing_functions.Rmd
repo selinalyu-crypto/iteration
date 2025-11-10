@@ -1,0 +1,130 @@
+---
+title: "Writing Functions"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+library(rvest)
+
+set.seed(1)
+```
+
+## My first function
+
+```{r}
+x_vec = rnorm(25, mean = 5, sd = 3)
+
+(x_vec - mean(x_vec)) / sd(x_vec)
+```
+
+I want a function to compute z-scores
+```{r}
+z_scores = function(x) {    
+  
+  if (!is.numeric(x)) {
+  stop("Argument x should be numeric")
+  } 
+  
+  else if (length(x) == 1) {
+  stop("Z scores cannot be computed for length 1 vectors")
+  }
+  z = (x - mean(x)) / sd(x)
+  z
+  
+}  #function writing
+
+z_scores(x_vec) 
+```
+
+Try my function on some other things. These should give errors.
+```{r, error = TRUE}
+z_scores(3)
+
+z_scores("my name is jeff")
+
+z_scores(iris)
+
+z_scores(c(TRUE, TRUE, FALSE, TRUE))
+
+z_scores(sample(c(TRUE, FALSE), 25, replace = TRUE))
+```
+
+## Multiple outputs
+
+```{r}
+mean_and_sd = function(x) {    
+  
+  if (!is.numeric(x)) {
+  stop("Argument x should be numeric")
+  } 
+  
+  else if (length(x) == 1) {
+  stop("Z scores cannot be computed for length 1 vectors")
+  }
+  
+  mean_x = mean(x)
+  sd_x = sd(x)
+  
+  tibble(
+    mean = mean_x, 
+    sd = sd_x
+  )
+}
+```
+
+Check that the function works
+```{r}
+x_vec = rnorm(1000, mean = 3, sd = 4) #created a vector
+
+mean_and_sd(x_vec)
+```
+
+## Multiple inputs
+
+I'd like to do this in a function
+```{r}
+sim_data = tibble(                   #created a dataframe
+  x = rnorm(30, mean = 2, sd = 3)
+)
+
+sim_data |> 
+  summarize(
+    mu_hat = mean(x),
+    sigma_hat = sd(x)
+  )
+```
+
+```{r}
+sim_mean_sd = function(n, mu = 2, sigma = 3) {
+  
+  sim_data = tibble(
+    x = rnorm(n=n, mean = mu, sd = sigma),
+  )
+  
+  sim_data |> 
+    summarize(
+      mu_hat = mean(x),
+      sigma_hat = sd(x)
+    )
+}
+
+sim_mean_sd(100, 6, 3) #each time you run, you get slightly different number, showing variability of sample if you run it over and over again
+
+sim_mean_sd(n = 100) #used default (first line)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
