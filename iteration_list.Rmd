@@ -101,8 +101,52 @@ for (i in 1:4) {
 ```{r}
 output = map(list_norms, mean_and_sd)
 
-list_norms
+output = vector("list", length = 4)
+
+for (i in 1:4) {
+  output[[i]] = median(list_norms[[i]])
+}
+
+output = map(list_norms, median)
+output = map(list_norms, IQR)
 ```
+
+```{r}
+output = map_dbl(list_norms, median, .id = "input")
+```
+
+```{r}
+output = map_dfr(list_norms, mean_and_sd, .id = "input")
+```
+
+## list columns
+
+```{r}
+listcol_df = 
+  tibble(
+    name = c("a", "b", "c", "d"),
+    samp = list_norms
+  )
+
+listcol_df |> pull(name)
+listcol_df |> pull(samp)
+pull(listcol_df, samp)[[1]]
+mean_and_sd(pull(listcol_df, samp)[[1]])
+
+map(pull(listcol_df, samp), mean_and_sd)
+```
+
+add a list column
+```{r}
+listcol_df = 
+  listcol_df |> 
+  mutate(summary = map(samp, mean_and_sd),
+  medians = map_dbl(samp, median))
+
+listcol_df
+```
+
+
 
 
 

@@ -144,7 +144,40 @@ for (i in 1:4) {
 ``` r
 output = map(list_norms, mean_and_sd)
 
-list_norms
+output = vector("list", length = 4)
+
+for (i in 1:4) {
+  output[[i]] = median(list_norms[[i]])
+}
+
+output = map(list_norms, median)
+output = map(list_norms, IQR)
+```
+
+``` r
+output = map_dbl(list_norms, median, .id = "input")
+```
+
+``` r
+output = map_dfr(list_norms, mean_and_sd, .id = "input")
+```
+
+## list columns
+
+``` r
+listcol_df = 
+  tibble(
+    name = c("a", "b", "c", "d"),
+    samp = list_norms
+  )
+
+listcol_df |> pull(name)
+```
+
+    ## [1] "a" "b" "c" "d"
+
+``` r
+listcol_df |> pull(samp)
 ```
 
     ## $a
@@ -168,3 +201,67 @@ list_norms
     ##  [7] -3.2550270 -4.4244947 -3.1443996 -2.7924617 -0.6920216 -2.8941976
     ## [13] -2.5430012 -3.0771529 -3.3340008 -3.0347260 -2.2123604 -0.9247550
     ## [19] -1.9726076 -1.7920916
+
+``` r
+pull(listcol_df, samp)[[1]]
+```
+
+    ##  [1] 2.379633 3.042116 2.089078 3.158029 2.345415 4.767287 3.716707 3.910174
+    ##  [9] 3.384185 4.682176 2.364264 2.538355 4.432282 2.349304 2.792619 2.607192
+    ## [17] 2.680007 2.720887 3.494188 2.822670
+
+``` r
+mean_and_sd(pull(listcol_df, samp)[[1]])
+```
+
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1  3.11 0.814
+
+``` r
+map(pull(listcol_df, samp), mean_and_sd)
+```
+
+    ## $a
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1  3.11 0.814
+    ## 
+    ## $b
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1 -1.09  3.34
+    ## 
+    ## $c
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1  9.92 0.237
+    ## 
+    ## $d
+    ## # A tibble: 1 × 2
+    ##    mean    sd
+    ##   <dbl> <dbl>
+    ## 1 -2.52 0.974
+
+add a list column
+
+``` r
+listcol_df = 
+  listcol_df |> 
+  mutate(summary = map(samp, mean_and_sd),
+  medians = map_dbl(samp, median))
+
+listcol_df
+```
+
+    ## # A tibble: 4 × 4
+    ##   name  samp         summary          medians
+    ##   <chr> <named list> <named list>       <dbl>
+    ## 1 a     <dbl [20]>   <tibble [1 × 2]>   2.81 
+    ## 2 b     <dbl [20]>   <tibble [1 × 2]>  -0.985
+    ## 3 c     <dbl [20]>   <tibble [1 × 2]>   9.86 
+    ## 4 d     <dbl [20]>   <tibble [1 × 2]>  -2.68
