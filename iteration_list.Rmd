@@ -5,6 +5,10 @@ output: github_document
 ---
 ```{r, include = FALSE}
 library(tidyverse)
+library(rvest)
+set.seed(1)
+
+
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -90,8 +94,16 @@ output = vector("list", length = 4)
 for (i in 1:4) {
   output[[i]] = mean_and_sd(list_norms[[i]])
 }
-
 ```
+
+## Let's try map
+
+```{r}
+output = map(list_norms, mean_and_sd)
+
+list_norms
+```
+
 
 
 
