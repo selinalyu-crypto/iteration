@@ -1,10 +1,12 @@
 ---
-title: "rmd file"
+title: "Simulations"
 author: Selina Lyu
 output: github_document
 ---
 ```{r, include = FALSE}
 library(tidyverse)
+set.seed(1)
+
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -22,3 +24,83 @@ options(
 scale_colour_discrete = scale_color_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
+
+## Let's simulate something
+
+I have function:
+```{r}
+sim_mean_sd = function(n, mu = 2, sigma = 3) {
+  
+  sim_data = tibble(
+    x = rnorm(n, mean = mu, sd = sigma),
+  )
+  
+  sim_data |> 
+    summarize(
+      mu_hat = mean(x),
+      sigma_hat = sd(x)
+    )
+}
+```
+
+I can simulate by running this line
+```{r}
+sim_mean_sd(30)  #each time yield different result, sample from a population
+```
+
+## Let's simulate a lot
+
+start with a for loop
+
+```{r}
+output = vector("list", 100) #do 100 times
+
+for (i in 1:100) {
+  output[[i]] = sim_mean_sd(30)
+}
+
+sim_results = bind_rows(output)
+```
+
+Let's use a loop function
+
+```{r}
+sim_results =
+  map(1:100, ~ sim_mean_sd(30))|>
+  bind_rows()
+
+sim_results_df = 
+  expand_grid(
+    sample_size = 30,
+    iter = 1:100
+  ) |> 
+  mutate(
+    estimate_df = map(sample_size, sim_mean_sd)
+  ) |> 
+  unnest(estimate_df)
+```
+
+look at results: 
+
+```{r}
+sim_results_df |> 
+  ggplot(aes(x = mu_hat)) + 
+  geom_density()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

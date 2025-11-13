@@ -1,5 +1,5 @@
 ---
-title: "rmd file"
+title: "Iteration and list columns"
 author: Selina Lyu
 output: github_document
 ---
